@@ -1,3 +1,38 @@
+# How do you do integer division without actually using division? This
+# is one answer. It's an extension of repeated subtraction, except
+# that we start by finding the largest number n such that b*2^n <=
+# a. Then we subtract b*2^n from a, and add 2^n to the quotient. And
+# then we do the same for b*2^(n-1). And so on, all the way down to b
+# itself.
+#
+# This process is very related to converting to binary (base 2). We're
+# representing a as a polynomial of the form:
+#
+# a = b * x(n) * 2^n + b * x(n-1) * 2^(n-1) + ... + b * x(0) * 2^0 + R
+#   = b * (x(n) * 2^n + x(n-1) * 2^(n-1) + ... + x(0) * 2^0) + R
+#
+# Then we get something pretty close to a/b with some algebra:
+#
+# (a - R) / b = x(n) * 2^n + x(n-1) * 2^(n-1) + ... + x(0) * 2^0
+#
+# If R is the remainder (and thus R < b and a - R is divisible by b),
+# then
+#
+# floor(a / b) = (a - R) / b
+#
+# And floor(a/b) is what we're aiming for. We thus only need to find
+# the sum
+#
+# x(n) * 2^n + x(n-1) * 2^(n-1) + ... + x(0) * 2^0
+#
+# that satisfies the equation, and can do that by simply subtracting
+# the largest term (multiplied by b) from a, and keep a running total
+# of the actual not-multiplied-by-b sum as we go.
+#
+# This is probably the clearest explanation you'll get here. The code
+# itself is .... not well documented. Good luck!
+
+
 def divide(a, b):
     """
     >>> divide(3, 1)
